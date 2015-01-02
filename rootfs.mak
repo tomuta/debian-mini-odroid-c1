@@ -1,44 +1,70 @@
 UBOOT_BIN_DIR := u-boot/sd_fuse
 ROOTFS_DIR := rootfs
 BOOT_DIR := boot
+MODS_DIR := mods
 LINUX_SRC := linux
+LINUX_VERSION := 3.10.43
 IMAGE_FILE := sdcard.img
+RAMDISK_FILE := uInitrd
 
 DIST := stable
 DIST_URL := http://ftp.debian.org/debian/
-DIST_ARCH := armel
+DIST_ARCH := armhf
 
 .PHONY: all
 all: build
 
 .PHONY: clean
-clean:
-	rm -rf $(wildcard $(ROOTFS_DIR) $(IMAGE_FILE) $(IMAGE_FILE).tmp)
+clean: delete-rootfs
+	rm -rf $(wildcard $(IMAGE_FILE) $(IMAGE_FILE).tmp)
 
 .PHONY: distclean
-distclean:
-	rm -rf $(wildcard $(ROOTFS_DIR) $(ROOTFS_DIR).base $(ROOTFS_DIR).base.tmp)
+distclean: delete-rootfs
+	rm -rf $(wildcard $(ROOTFS_DIR).base $(ROOTFS_DIR).base.tmp)
 
+.PHONY: delete-rootfs
+delete-rootfs:
+	if mountpoint -q $(ROOTFS_DIR)/proc ; then umount $(ROOTFS_DIR)/proc ; fi
+	if mountpoint -q $(ROOTFS_DIR)/sys ; then umount $(ROOTFS_DIR)/sys ; fi
+	if mountpoint -q $(ROOTFS_DIR)/dev ; then umount $(ROOTFS_DIR)/dev ; fi
+	rm -rf $(wildcard $(ROOTFS_DIR) uInitrd)
+	
 .PHONY: build
 build: $(IMAGE_FILE)
 
 $(ROOTFS_DIR).base:
 	if test -d "$@.tmp"; then rm -rf "$@.tmp" ; fi
 	mkdir -p $@.tmp
-	debootstrap --foreign --no-check-gpg --include=ca-certificates,ssh --arch=$(DIST_ARCH) $(DIST) $@.tmp $(DIST_URL)
+	debootstrap --foreign --no-check-gpg --include=ca-certificates,ssh,vim,initramfs-tools --arch=$(DIST_ARCH) $(DIST) $@.tmp $(DIST_URL)
 	cp `which qemu-arm-static` $@.tmp/usr/bin
 	chroot $@.tmp /bin/bash -c "/debootstrap/debootstrap --second-stage"
+	rm $@.tmp/etc/ssh/ssh_host_*
+	ln -s /proc/mounts $@.tmp/etc/mtab
 	mv $@.tmp $@
+	touch $@
 
 $(ROOTFS_DIR): $(ROOTFS_DIR).base
 	rsync --quiet --archive --devices --specials --hard-links --acls --xattrs --sparse $(ROOTFS_DIR).base/* $@
+	rsync --quiet --archive --devices --specials --hard-links --acls --xattrs --sparse $(MODS_DIR)/* $@
+	mount -o bind /proc $@/proc
+	mount -o bind /sys $@/sys
+	mount -o bind /dev $@/dev
 	cp postinstall.sh $@
-	chroot $@ /bin/bash -c "/postinstall.sh $(DIST) $(DIST_URL)"
+	chroot $@ /bin/bash -c "/postinstall.sh $(DIST) $(DIST_URL) $(LINUX_VERSION)"
+	for i in patches/*.patch ; do patch -p0 -d $@ < $$i ; done
+	umount $@/proc
+	umount $@/sys
+	umount $@/dev
 	rm $@/postinstall.sh
 	rm $@/usr/bin/qemu-arm-static
+	touch $@
 
-$(IMAGE_FILE): $(ROOTFS_DIR)
+$(RAMDISK_FILE): $(ROOTFS_DIR)
+	mkimage -A arm -O linux -T ramdisk -C none -a 0 -e 0 -n uInitrd -d $(ROOTFS_DIR)/boot/initrd.img-* uInitrd
+
+$(IMAGE_FILE): $(ROOTFS_DIR) $(RAMDISK_FILE)
 	if test -f "$@.tmp"; then rm "$@.tmp" ; fi
-	./createimg.sh $@.tmp 32 512 $(BOOT_DIR) $(ROOTFS_DIR) $(UBOOT_BIN_DIR)
+	./createimg.sh $@.tmp 32 768 $(BOOT_DIR) $(ROOTFS_DIR) $(UBOOT_BIN_DIR) $(RAMDISK_FILE)
 	mv $@.tmp $@
+	touch $@
 

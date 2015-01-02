@@ -25,6 +25,7 @@ distclean:
 $(TC_DIR): $(TOOLCHAIN)
 	mkdir -p $@
 	tar xzf $(TOOLCHAIN) -C $@
+	touch $@
 
 $(TOOLCHAIN):
 	wget -O $@ $(TOOLCHAIN_URL)

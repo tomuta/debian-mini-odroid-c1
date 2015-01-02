@@ -6,6 +6,8 @@ u-boot
 boot
 rootfs
 rootfs.base
+mods
+uInitrd
 mnt
 *~
 *.tmp

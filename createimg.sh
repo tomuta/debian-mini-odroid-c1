@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ "$#" -ne 6 ]; then
-	echo "Usage: $0 OUTFILE BOOT_MEGABYTES TOTAL_MEGABYTES BOOT_DIR ROOTFS_DIR UBOOT_BIN_DIR"
+if [ "$#" -ne 7 ]; then
+	echo "Usage: $0 OUTFILE BOOT_MEGABYTES TOTAL_MEGABYTES BOOT_DIR ROOTFS_DIR UBOOT_BIN_DIR RAMFS_FILE"
 	exit 1
 fi
 
@@ -38,6 +38,7 @@ function losetup_partition {
 }
 
 function losetup_delete_retry {
+	sync
 	until losetup -d $1
 	do
 		sleep 1
@@ -57,6 +58,7 @@ total_mb=$3
 boot_dir=$4
 rootfs_dir=$5
 uboot_bin_dir=$6
+ramfs_file=$7
 
 # Calculate desired image size in bytes
 img_size=$(( $total_mb*1024*1024 ))
@@ -82,6 +84,7 @@ img_size=$(( $cylinders*$bytes_per_cylinder + $bytes ))
 #qemu-img create -f raw $outfile $img_size
 #echo -e "\x55\xaa" | dd bs=1 count=2 seek=510 of=$outfile conv=notrunc
 dd if=/dev/zero of=$outfile bs=1024 count=$(( $img_size/1024 ))
+echo -e "\x55\xaa" | dd bs=1 count=2 seek=510 of=$outfile conv=notrunc
 dd if=$uboot_bin_dir/bl1.bin.hardkernel of=$outfile bs=1 count=442 conv=notrunc
 dd if=$uboot_bin_dir/bl1.bin.hardkernel of=$outfile bs=512 skip=1 seek=1 conv=notrunc
 dd if=$uboot_bin_dir/u-boot.bin of=$outfile bs=512 seek=64 conv=notrunc
@@ -91,7 +94,7 @@ sync
 # has issues when the first partition starts at an arbitrary offset...
 first_part_start_sector=$((1*1024*1024/$bytes))
 first_part_end_sector=$(( $(( $(( $(($boot_mb*1024*1024/$bytes)) + $first_part_start_sector + $sectors_per_cylinder - 1 )) / $sectors_per_cylinder )) * $sectors_per_cylinder ))
-second_part_start_sector=$(($first_part_end_sector+1))
+second_part_start_sector=$first_part_end_sector
 second_part_end_sector=$(($cylinders*$sectors_per_cylinder))
 
 # Partition the disk
@@ -103,7 +106,7 @@ EOF
 if mountpoint -q mnt; then
 	device=`df -h mnt | grep "^/" | cut -f1 -d' '`
 	umount_retry mnt
-	if [ "$device" != ""]; then
+	if [ "$device" != "" ]; then
 		losetup_delete_retry $device
 	fi
 fi
@@ -114,27 +117,42 @@ fi
 
 # Mount boot partition, format it and copy files
 lodev=$(losetup_partition $outfile 1)
-mkfs.msdos -F 32 $lodev
+echo "Formatting boot partition on $lodev..."
+mkfs.vfat -F 32 $lodev
 boot_uuid=`blkid $lodev | sed -n 's/.*UUID=\"\([^\"]*\)\".*/\1/p'`
 losetup_delete_retry $lodev
 
+# Wait a bit, weird race condition where mkfs.ext4 sees the fat32 partition again
+sleep 2
+
 # Mount rootfs partition, format it and copy files
 lodev=$(losetup_partition $outfile 2)
+echo "Formatting root partition on $lodev..."
 mkfs.ext4 -b 4096 -E stride=16384,stripe-width=16384 -m 1 -L root $lodev
 tune2fs -i 0 -c 0 $lodev
 root_uuid=`blkid $lodev | sed -n 's/.*UUID=\"\([^\"]*\)\".*/\1/p'`
 mkdir -p mnt
 mount -t ext4 $lodev mnt/
-rsync --archive --devices --specials --hard-links --acls --xattrs --sparse --verbose $rootfs_dir/* mnt/
+rsync --quiet --archive --devices --specials --hard-links --acls --xattrs --sparse --exclude '/boot/' --exclude '/tmp/' --exclude '/media/' --exclude '/root/' --exclude '/var/log/' $rootfs_dir/* mnt/
+mkdir -p mnt/boot
+mkdir -p mnt/root
+mkdir -p mnt/tmp
+mkdir -p mnt/media
+mkdir -p mnt/var/log
 sed -e "s/\${BOOT_UUID}/$boot_uuid/" -e "s/\${ROOT_UUID}/$root_uuid/" fstab.template > mnt/etc/fstab
 umount_retry mnt
 losetup_delete_retry $lodev
 
+# Wait a bit, weird race condition (see above)
+sleep 2
+
 # Mount the boot partition again and copy boot.ini
 lodev=$(losetup_partition $outfile 1)
+echo "Mounting boot partition on $lodev..."
 mount -t vfat $lodev mnt/
 sed -e "s/\${BOOT_UUID}/$boot_uuid/" -e "s/\${ROOT_UUID}/$root_uuid/" boot.ini.template > mnt/boot.ini
 cp -rp $boot_dir/* mnt/
+cp -p $ramfs_file mnt/
 umount_retry mnt
 losetup_delete_retry $lodev
 

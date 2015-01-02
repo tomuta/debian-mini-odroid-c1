@@ -1,0 +1,12 @@
+--- etc/init.d/udev-mtab.orig	2015-01-01 21:01:46.383961439 -0700
++++ etc/init.d/udev-mtab	2015-01-01 21:03:45.607963750 -0700
+@@ -17,6 +17,9 @@
+ esac
+ 
+ # copy the rules generated before / was mounted read-write
++if [ ! -d /tmp/udev-rules.d ]; then
++  mkdir -p /tmp/udev-rules.d
++fi
+ for file in /dev/.udev/tmp-rules--* /run/udev/tmp-rules--*; do
+   dest=${file##*tmp-rules--}
+   [ "$dest" = '*' ] && continue
