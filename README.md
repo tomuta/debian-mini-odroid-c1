@@ -3,6 +3,13 @@ debian-mini-odroid-c1
 
 Script to build a minimal Debian read-only root sd card image.
 
+## Featues:
+* SSH root login password: odroid
+* Host name: odroidc1
+* Read-only root file system: /tmp, /root, /var/log, /media are tmpfs file systems and are writable, but won't persist
+* SSH host keys are generated and saved permanently on first boot
+* Automatic mounting of USB storage devices using usbmount
+
 ## Prerequisites:
 On a Ubuntu system, make sure the following packages are installed:
 > sudo apt-get install build-essential wget git lzop u-boot-tools binfmt-support qemu qemu-user-static debootstrap
@@ -12,8 +19,7 @@ If you are running 64 bit Ubuntu, you might need to run the following commands t
 > sudo apt-get update
 > sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1
 
-## Usage:
-
+## Build the image:
 Just use the make utility to build an sdcard.img.  Be sure to run this with sudo, as root privileges are required to mount the image.
 
 > sudo make
