@@ -3,7 +3,7 @@ debian-mini-odroid-c1
 
 Script to build a minimal Debian read-only root sd card image.
 
-## Featues:
+## Features:
 * SSH root login password: odroid
 * Host name: odroidc1
 * Read-only root file system: /tmp, /root, /var/log, /media are tmpfs file systems and are writable, but won't persist
