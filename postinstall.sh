@@ -42,6 +42,7 @@ ln -s /tmp/udev-rules.d /etc/udev/rules.d
 echo "odroidc1" > /etc/hostname
 
 insserv usbmount-start
+insserv framebuffer-start
 
 # Cleanup
 apt-get clean
