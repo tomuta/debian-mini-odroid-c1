@@ -38,11 +38,9 @@ ln -s /tmp/resolv.conf /etc/resolv.conf
 rm -rf /etc/udev/rules.d
 ln -s /tmp/udev-rules.d /etc/udev/rules.d
 
-# Set hostname
-echo "odroidc1" > /etc/hostname
-
 insserv usbmount-start
 insserv framebuffer-start
+insserv hostname-init
 
 # Cleanup
 apt-get clean
