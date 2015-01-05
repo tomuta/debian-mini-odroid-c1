@@ -10,6 +10,11 @@ Script to build a minimal Debian read-only root sd card image.
 * SSH host keys are generated and saved permanently on first boot
 * Automatic mounting of USB storage devices using usbmount
 
+## TODO:
+* Move parts or all of /var to tmpfs:
+  * can't create /var/lib/dhcp/dhclient.eth0.leases: Read-only file system
+* apt-get update doesn't work unless you remount,rw / first, even though there is a hook in /etc/apt/apt.conf.d/00autoremount that should be doing this...
+
 ## Prerequisites:
 On a Ubuntu system, make sure the following packages are installed:
 > sudo apt-get install build-essential wget git lzop u-boot-tools binfmt-support qemu qemu-user-static debootstrap

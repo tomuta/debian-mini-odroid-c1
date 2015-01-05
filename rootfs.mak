@@ -1,15 +1,6 @@
-UBOOT_BIN_DIR := u-boot/sd_fuse
-ROOTFS_DIR := rootfs
-BOOT_DIR := boot
-MODS_DIR := mods
-LINUX_SRC := linux
-LINUX_VERSION := 3.10.43
-IMAGE_FILE := sdcard.img
-RAMDISK_FILE := uInitrd
+include common.mk
 
-DIST := stable
-DIST_URL := http://ftp.debian.org/debian/
-DIST_ARCH := armhf
+UBOOT_BIN_DIR := $(UBOOT_SRC)/sd_fuse
 
 .PHONY: all
 all: build

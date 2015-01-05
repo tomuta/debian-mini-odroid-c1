@@ -1,0 +1,28 @@
+DIST := stable
+DIST_URL := http://ftp.debian.org/debian/
+DIST_ARCH := armhf
+
+BOOT_DIR := boot
+MODS_DIR := mods
+ROOTFS_DIR := rootfs
+RAMDISK_FILE := uInitrd
+IMAGE_FILE := sdcard.img
+
+UBOOT_TOOLCHAIN := gcc-arm-none-eabi-4.4.1-2010q1-188-linux32.tar.gz
+UBOOT_TOOLCHAIN_URL := http://arduino.googlecode.com/files/$(UBOOT_TOOLCHAIN)
+UBOOT_TC_DIR := uboot_tc
+UBOOT_TC_PATH := $(UBOOT_TC_DIR)/g++_arm_none_eabi/bin
+UBOOT_REPO := https://github.com/hardkernel/u-boot.git
+UBOOT_BRANCH := odroidc-v2011.03
+UBOOT_SRC := u-boot
+
+LINUX_TOOLCHAIN := gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415_linux.tar.bz2
+LINUX_TOOLCHAIN_URL := https://releases.linaro.org/13.04/components/toolchain/binaries/$(LINUX_TOOLCHAIN)
+LINUX_TC_DIR := linux_tc
+LINUX_TC_PATH := $(LINUX_TC_DIR)/gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415_linux/bin
+LINUX_TC_PREFIX := arm-linux-gnueabihf-
+LINUX_REPO := https://github.com/hardkernel/linux.git
+LINUX_BRANCH := odroidc-3.10.y
+LINUX_SRC := linux
+LINUX_VERSION := 3.10.43
+

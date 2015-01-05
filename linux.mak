@@ -1,17 +1,8 @@
-TOOLCHAIN := gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415_linux.tar.bz2
-TOOLCHAIN_URL := https://releases.linaro.org/13.04/components/toolchain/binaries/$(TOOLCHAIN)
-
-TC_DIR := linux_tc
+include common.mk
 
 export ARCH := arm
-export CROSS_COMPILE := arm-linux-gnueabihf-
-export PATH := $(shell pwd)/$(TC_DIR)/gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415_linux/bin:$(PATH)
-
-LINUX_REPO := https://github.com/hardkernel/linux.git
-LINUX_BRANCH := odroidc-3.10.y
-LINUX_SRC := linux
-BOOT_DIR := boot
-MODS_DIR := mods
+export CROSS_COMPILE := $(LINUX_TC_PREFIX)
+export PATH := $(shell pwd)/$(LINUX_TC_PATH):$(PATH)
 
 UIMAGE_BIN := $(LINUX_SRC)/arch/arm/boot/uImage
 
@@ -25,14 +16,14 @@ clean:
 
 .PHONY: distclean
 distclean:
-	rm -rf $(wildcard $(TC_DIR) $(LINUX_SRC) $(BOOT_DIR) $(MODS_DIR) $(MODS_DIR).tmp)
+	rm -rf $(wildcard $(LINUX_TC_DIR) $(LINUX_SRC) $(BOOT_DIR) $(MODS_DIR) $(MODS_DIR).tmp)
 
-$(TC_DIR): $(TOOLCHAIN)
+$(LINUX_TC_DIR): $(LINUX_TOOLCHAIN)
 	mkdir -p $@
-	tar xjf $(TOOLCHAIN) -C $@
+	tar xjf $(LINUX_TOOLCHAIN) -C $@
 
-$(TOOLCHAIN):
-	wget -O $@ $(TOOLCHAIN_URL)
+$(LINUX_TOOLCHAIN):
+	wget -O $@ $(LINUX_TOOLCHAIN_URL)
 	touch $@
 
 .PHONY: build
@@ -47,7 +38,7 @@ $(BOOT_DIR): $(UIMAGE_BIN) $(MESON8B_ODROIDC_DTB_BIN)
 	mv "$@.tmp" $@
 	touch $@
 
-$(UIMAGE_BIN): $(TC_DIR) $(LINUX_SRC)
+$(UIMAGE_BIN): $(LINUX_TC_DIR) $(LINUX_SRC)
 	$(MAKE) -C $(LINUX_SRC) odroidc_defconfig
 	$(MAKE) -C $(LINUX_SRC) uImage
 	$(MAKE) -C $(LINUX_SRC) meson8b_odroidc.dtd
