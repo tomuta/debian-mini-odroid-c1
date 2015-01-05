@@ -16,10 +16,10 @@ UBOOT_REPO := https://github.com/hardkernel/u-boot.git
 UBOOT_BRANCH := odroidc-v2011.03
 UBOOT_SRC := u-boot
 
-LINUX_TOOLCHAIN := gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415_linux.tar.bz2
-LINUX_TOOLCHAIN_URL := https://releases.linaro.org/13.04/components/toolchain/binaries/$(LINUX_TOOLCHAIN)
+LINUX_TOOLCHAIN := gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux.tar.xz
+LINUX_TOOLCHAIN_URL := http://releases.linaro.org/14.09/components/toolchain/binaries/$(LINUX_TOOLCHAIN)
 LINUX_TC_DIR := linux_tc
-LINUX_TC_PATH := $(LINUX_TC_DIR)/gcc-linaro-arm-linux-gnueabihf-4.7-2013.04-20130415_linux/bin
+LINUX_TC_PATH := $(LINUX_TC_DIR)/bin
 LINUX_TC_PREFIX := arm-linux-gnueabihf-
 LINUX_REPO := https://github.com/hardkernel/linux.git
 LINUX_BRANCH := odroidc-3.10.y
