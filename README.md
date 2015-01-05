@@ -17,7 +17,7 @@ Script to build a minimal Debian read-only root sd card image.
 
 ## Prerequisites:
 On a Ubuntu system, make sure the following packages are installed:
-> sudo apt-get install build-essential wget git lzop u-boot-tools binfmt-support qemu qemu-user-static debootstrap
+> sudo apt-get install build-essential wget git lzop u-boot-tools binfmt-support qemu qemu-user-static debootstrap parted
 
 If you are running 64 bit Ubuntu, you might need to run the following commands to be able to launch the 32 bit toolchain:
 > sudo dpkg --add-architecture i386

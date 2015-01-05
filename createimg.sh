@@ -117,16 +117,15 @@ fi
 
 # Mount boot partition, format it and copy files
 lodev=$(losetup_partition $outfile 1)
+partprobe $lodev
 echo "Formatting boot partition on $lodev..."
 mkfs.vfat -F 32 $lodev
 boot_uuid=`blkid $lodev | sed -n 's/.*UUID=\"\([^\"]*\)\".*/\1/p'`
 losetup_delete_retry $lodev
 
-# Wait a bit, weird race condition where mkfs.ext4 sees the fat32 partition again
-sleep 2
-
 # Mount rootfs partition, format it and copy files
 lodev=$(losetup_partition $outfile 2)
+partprobe $lodev
 echo "Formatting root partition on $lodev..."
 mkfs.ext4 -b 4096 -E stride=16384,stripe-width=16384 -m 1 -L root $lodev
 tune2fs -i 0 -c 0 $lodev
@@ -148,6 +147,7 @@ sleep 2
 
 # Mount the boot partition again and copy boot.ini
 lodev=$(losetup_partition $outfile 1)
+partprobe $lodev
 echo "Mounting boot partition on $lodev..."
 mount -t vfat $lodev mnt/
 sed -e "s/\${BOOT_UUID}/$boot_uuid/" -e "s/\${ROOT_UUID}/$root_uuid/" boot.ini.template > mnt/boot.ini
