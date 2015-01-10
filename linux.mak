@@ -34,15 +34,14 @@ $(BOOT_DIR): $(UIMAGE_BIN) $(MESON8B_ODROIDC_DTB_BIN)
 	if test -d "$@"; then rm -rf "$@" ; fi
 	mkdir -p "$@.tmp"
 	cp -p $(LINUX_SRC)/arch/arm/boot/uImage "$@.tmp"
-	cp -p $(LINUX_SRC)/arch/arm/boot/dts/amlogic/meson8b_odroidc.dtb "$@.tmp"
+	cp -p $(LINUX_SRC)/arch/arm/boot/dts/meson8b_odroidc.dtb "$@.tmp"
 	mv "$@.tmp" $@
 	touch $@
 
 $(UIMAGE_BIN): $(LINUX_TC_DIR) $(LINUX_SRC)
 	$(MAKE) -C $(LINUX_SRC) odroidc_defconfig
 	$(MAKE) -C $(LINUX_SRC) uImage
-	$(MAKE) -C $(LINUX_SRC) meson8b_odroidc.dtd
-	$(MAKE) -C $(LINUX_SRC) meson8b_odroidc.dtb
+	$(MAKE) -C $(LINUX_SRC) dtbs
 	touch $@
 
 $(MODS_DIR): $(UIMAGE_BIN)

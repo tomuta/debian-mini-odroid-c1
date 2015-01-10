@@ -20,14 +20,14 @@ case "$1" in
         mac=`cat /sys/class/net/eth0/address | sed s/://g`
         hostname="odroidc1-$mac"
         log_action_begin_msg "Creating /etc/hostname with $hostname"
-        mount -n -o remount,rw / || echo "Remounting / rw failed"
+#       mount -n -o remount,rw / || echo "Remounting / rw failed"
         echo "$hostname" > /etc/hostname
         hostname "$hostname"
         if ! grep "^127.0.0.1\s*$hostname\s*" /etc/hosts > /dev/null ; then
             sed -i "1i 127.0.0.1\\t$hostname" /etc/hosts
         fi
-        sync || echo "sync failed"
-        mount -n -o remount,ro / || echo "Remounting / ro failed"
+#       sync || echo "sync failed"
+#       mount -n -o remount,ro / || echo "Remounting / ro failed"
         log_action_end_msg 0
     fi
     ;;

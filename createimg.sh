@@ -128,16 +128,13 @@ lodev=$(losetup_partition $outfile 2)
 partprobe $lodev
 echo "Formatting root partition on $lodev..."
 mkfs.ext4 -b 4096 -E stride=16384,stripe-width=16384 -m 1 -L root $lodev
-tune2fs -i 0 -c 0 $lodev
+#tune2fs -i 0 -c 0 $lodev
 root_uuid=`blkid $lodev | sed -n 's/.*UUID=\"\([^\"]*\)\".*/\1/p'`
 mkdir -p mnt
 mount -t ext4 $lodev mnt/
-rsync --quiet --archive --devices --specials --hard-links --acls --xattrs --sparse --exclude '/boot/' --exclude '/tmp/' --exclude '/media/' --exclude '/root/' --exclude '/var/log/' $rootfs_dir/* mnt/
+rsync --quiet --archive --devices --specials --hard-links --acls --xattrs --sparse --exclude '/boot/' --exclude '/tmp/' $rootfs_dir/* mnt/
 mkdir -p mnt/boot
-mkdir -p mnt/root
 mkdir -p mnt/tmp
-mkdir -p mnt/media
-mkdir -p mnt/var/log
 sed -e "s/\${BOOT_UUID}/$boot_uuid/" -e "s/\${ROOT_UUID}/$root_uuid/" fstab.template > mnt/etc/fstab
 umount_retry mnt
 losetup_delete_retry $lodev
