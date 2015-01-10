@@ -38,6 +38,7 @@ $(ROOTFS_DIR).base:
 $(ROOTFS_DIR): $(ROOTFS_DIR).base
 	rsync --quiet --archive --devices --specials --hard-links --acls --xattrs --sparse $(ROOTFS_DIR).base/* $@
 	rsync --quiet --archive --devices --specials --hard-links --acls --xattrs --sparse $(MODS_DIR)/* $@
+	cd $@/lib/modules ; if [ ! -d "$(LINUX_VERSION)" ] ; then ln -s $(LINUX_VERSION)* $(LINUX_VERSION) ; fi
 	cd files ; find . -type f ! -name '*~' -exec cp --preserve=mode,timestamps --parents \{\} ../$@ \;
 	mount -o bind /proc $@/proc
 	mount -o bind /sys $@/sys
