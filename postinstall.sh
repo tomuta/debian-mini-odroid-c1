@@ -33,6 +33,23 @@ update-initramfs -c -t -k $KERNEL_VERSION
 insserv framebuffer-start
 insserv hostname-init
 
+# Prevent apt-get from starting services
+echo "#!/bin/sh
+exit 101
+" > /usr/sbin/policy-rc.d
+chmod +x /usr/sbin/policy-rc.d
+
+# Run custom install scripts
+if [ -d "/postinst" ]; then
+	for i in /postinst/* ; do
+		echo "Running post-install script $i..."
+		$i
+	done
+fi
+
+# Re-enable services to start
+rm /usr/sbin/policy-rc.d
+
 # Cleanup
 apt-get clean
 

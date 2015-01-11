@@ -44,12 +44,14 @@ $(ROOTFS_DIR): $(ROOTFS_DIR).base
 	mount -o bind /sys $@/sys
 	mount -o bind /dev $@/dev
 	cp postinstall.sh $@
+	if [ -d "postinst" ]; then cp -r postinst $@ ; fi
 	chroot $@ /bin/bash -c "/postinstall.sh $(DIST) $(DIST_URL) $(LINUX_VERSION)"
 	for i in patches/*.patch ; do patch -p0 -d $@ < $$i ; done
 	umount $@/proc
 	umount $@/sys
 	umount $@/dev
 	rm $@/postinstall.sh
+	rm -rf $@/postinst/
 	rm $@/usr/bin/qemu-arm-static
 	touch $@
 
