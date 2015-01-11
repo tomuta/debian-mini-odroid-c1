@@ -20,6 +20,13 @@ echo "Running postinstall.sh script..."
 # Set root password
 echo "root:odroid" | chpasswd
 
+# Set the locale
+sed -i "s/^#[[:space:]]*en_US\.UTF-8\(.*\)/en_US\.UTF-8\1/g" /etc/locale.gen
+locale-gen
+
+# Set timezone
+dpkg-reconfigure -f noninteractive tzdata
+
 # Initialize /etc/apt/sources.list
 echo "deb $DIST_URL $DIST main contrib non-free" > /etc/apt/sources.list
 echo "deb-src $DIST_URL $DIST main contrib non-free" >> /etc/apt/sources.list
@@ -42,8 +49,10 @@ chmod +x /usr/sbin/policy-rc.d
 # Run custom install scripts
 if [ -d "/postinst" ]; then
 	for i in /postinst/* ; do
-		echo "Running post-install script $i..."
-		$i
+		if [ -x "$i" ]; then
+			echo "Running post-install script $i..."
+			$i
+		fi
 	done
 fi
 
