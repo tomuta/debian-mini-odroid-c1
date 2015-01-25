@@ -37,6 +37,7 @@ apt-get update
 # Generate the initial ramfs
 update-initramfs -c -t -k $KERNEL_VERSION
 
+insserv usbmount-start
 insserv framebuffer-start
 insserv hostname-init
 

@@ -132,10 +132,15 @@ mkfs.ext4 -b 4096 -E stride=16384,stripe-width=16384 -m 1 -L root $lodev
 root_uuid=`blkid $lodev | sed -n 's/.*UUID=\"\([^\"]*\)\".*/\1/p'`
 mkdir -p mnt
 mount -t ext4 $lodev mnt/
-rsync --quiet --archive --devices --specials --hard-links --acls --xattrs --sparse --exclude '/boot/' --exclude '/tmp/' $rootfs_dir/* mnt/
+rsync --quiet --archive --devices --specials --hard-links --acls --xattrs --sparse --exclude '/boot/' --exclude '/tmp/' --exclude '/media/' --exclude '/root/' $rootfs_dir/* mnt/
 mkdir -p mnt/boot
+mkdir -p mnt/media
+mkdir -p mnt/root
 mkdir -p mnt/tmp
 sed -e "s/\${BOOT_UUID}/$boot_uuid/" -e "s/\${ROOT_UUID}/$root_uuid/" fstab.template > mnt/etc/fstab
+if [ -x "./createimg-rootfs-post" ] ; then
+	./createimg-rootfs-post mnt/ $rootfs_dir/
+fi
 umount_retry mnt
 losetup_delete_retry $lodev
 
@@ -150,6 +155,9 @@ mount -t vfat $lodev mnt/
 sed -e "s/\${BOOT_UUID}/$boot_uuid/" -e "s/\${ROOT_UUID}/$root_uuid/" boot.ini.template > mnt/boot.ini
 cp -rp $boot_dir/* mnt/
 cp -p $ramfs_file mnt/
+if [ -x "./createimg-bootfs-post" ] ; then
+	./createimg-bootfs-post mnt/
+fi
 umount_retry mnt
 losetup_delete_retry $lodev
 
