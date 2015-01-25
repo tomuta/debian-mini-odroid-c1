@@ -1,6 +1,9 @@
 DIST := stable
-DIST_URL := http://ftp.debian.org/debian/
+DIST_URL := http://ftp.us.debian.org/debian/
 DIST_ARCH := armhf
+
+BOOT_MB := 32
+ROOT_MB := 768
 
 BOOT_DIR := boot
 MODS_DIR := mods
@@ -24,5 +27,4 @@ LINUX_TC_PREFIX := arm-linux-gnueabihf-
 LINUX_REPO := https://github.com/hardkernel/linux.git
 LINUX_BRANCH := odroidc-3.10.y
 LINUX_SRC := linux
-LINUX_VERSION := 3.10.44
 

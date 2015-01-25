@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ "$#" -ne 7 ]; then
 	echo "Usage: $0 OUTFILE BOOT_MEGABYTES TOTAL_MEGABYTES BOOT_DIR ROOTFS_DIR UBOOT_BIN_DIR RAMFS_FILE"

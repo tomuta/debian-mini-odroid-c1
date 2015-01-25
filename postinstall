@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #
 # NOTE: This script is run within the chroot after second stage debootstrap!
@@ -15,7 +15,7 @@ DIST=$1
 DIST_URL=$2
 KERNEL_VERSION=$3
 
-echo "Running postinstall.sh script..."
+echo "Running postinstall script..."
 
 # Set root password
 echo "root:odroid" | chpasswd
