@@ -49,12 +49,7 @@ chmod +x /usr/sbin/policy-rc.d
 
 # Run custom install scripts
 if [ -d "/postinst" ]; then
-	for i in /postinst/* ; do
-		if [ -x "$i" ]; then
-			echo "Running post-install script $i..."
-			$i
-		fi
-	done
+	find /postinst -maxdepth 1 -type f -executable -not -name "*~" -exec {} \;
 fi
 
 # Re-enable services to start
