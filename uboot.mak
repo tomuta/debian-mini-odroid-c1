@@ -17,7 +17,7 @@ distclean:
 
 $(UBOOT_TC_DIR): $(UBOOT_TOOLCHAIN)
 	mkdir -p $@
-	tar xzf $(UBOOT_TOOLCHAIN) -C $@
+	tar xf $(UBOOT_TOOLCHAIN) --strip-components=1 -C $@
 	touch $@
 
 $(UBOOT_TOOLCHAIN):
