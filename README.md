@@ -10,7 +10,7 @@ Script to build a minimal Debian sd card image.  If you are looking for a minima
 * Automatic mounting of USB storage devices using usbmount
 
 ## Prerequisites:
-On a Ubuntu system, make sure the following packages are installed:
+On a x86 based Ubuntu system, make sure the following packages are installed:
 ```
 sudo apt-get install build-essential wget git lzop u-boot-tools binfmt-support \
                      qemu qemu-user-static debootstrap parted
@@ -33,3 +33,6 @@ This will install the toolchains, compile u-boot, the kernel, bootstrap Debian a
 ```
 sudo dd bs=1M if=sdcard.img of=/dev/YOUR_SD_CARD
 ```
+
+## Customize your image:
+It should be fairly easy to customize your image for your own needs.  You can drop scripts into the `postinst` folder and add patches to the `patches` folder, as well as add any files you want as part of the root file system into the `files` folder.  This should allow you install extra packages (e.g. using apt-get) and modify configurations to your needs.  Of course, you can do all this manually after booting the device, but the goal of this project is to be able to generate re-usable images that can be deployed on any number of ODROID-C1 devices (think of it as "firmware" of a consumer device).
