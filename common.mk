@@ -8,7 +8,7 @@ ifneq ($(findstring $(DIST),jessie stable),)
 ROOT_DEV := /dev/mmcblk0p2
 endif
 
-IMAGE_MB ?= 768
+IMAGE_MB ?= 2048
 BOOT_MB ?= 32
 ROOT_MB=$(shell expr $(IMAGE_MB) - $(BOOT_MB))
 
