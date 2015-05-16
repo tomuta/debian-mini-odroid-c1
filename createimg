@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-if [ "$#" -ne 7 ]; then
-	echo "Usage: $0 OUTFILE BOOT_MEGABYTES TOTAL_MEGABYTES BOOT_DIR ROOTFS_DIR UBOOT_BIN_DIR RAMFS_FILE"
+if [ "$#" -ne 8 ]; then
+	echo "Usage: $0 OUTFILE BOOT_MEGABYTES TOTAL_MEGABYTES BOOT_DIR ROOTFS_DIR UBOOT_BIN_DIR RAMFS_FILE ROOT_DEV"
 	exit 1
 fi
 
@@ -59,6 +59,7 @@ boot_dir=$4
 rootfs_dir=$5
 uboot_bin_dir=$6
 ramfs_file=$7
+root_dev=$8
 
 # Calculate desired image size in bytes
 img_size=$(( $total_mb*1024*1024 ))
@@ -152,7 +153,12 @@ lodev=$(losetup_partition $outfile 1)
 partprobe $lodev
 echo "Mounting boot partition on $lodev..."
 mount -t vfat $lodev mnt/
-sed -e "s/\${BOOT_UUID}/$boot_uuid/" -e "s/\${ROOT_UUID}/$root_uuid/" boot.ini.template > mnt/boot.ini
+if [ "$root_dev" != "" ]; then
+	sed -e "s/\${BOOT_UUID}/$boot_uuid/" -e "s/\${ROOT_DEV}/$(echo $root_dev | sed -e 's/[\/&]/\\&/g')/" boot.ini.template > mnt/boot.ini
+	cp mnt/boot.ini boot.example
+else
+	sed -e "s/\${BOOT_UUID}/$boot_uuid/" -e "s/\${ROOT_DEV}/UUID=$root_uuid/" boot.ini.template > mnt/boot.ini
+fi
 cp -rp $boot_dir/* mnt/
 cp -p $ramfs_file mnt/
 if [ -x "./createimg-bootfs-post" ] ; then

@@ -48,8 +48,13 @@ exit 101
 chmod +x /usr/sbin/policy-rc.d
 
 # Run custom install scripts
-if [ -d "/postinst" ]; then
+if [ -d /postinst ]; then
 	find /postinst -maxdepth 1 -type f -executable -not -name "*~" -exec {} \;
+fi
+
+# Run custom install scripts for a specific distribution
+if [ -d /postinst/$DIST ]; then
+	find /postinst/$DIST -maxdepth 1 -type f -executable -not -name "*~" -exec {} \;
 fi
 
 # Re-enable services to start

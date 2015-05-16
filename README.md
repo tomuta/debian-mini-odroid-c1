@@ -4,6 +4,7 @@ debian-mini-odroid-c1
 Script to build a minimal Debian sd card image.  If you are looking for a minimal Debian image with read-only root file system, look [here](https://github.com/tomuta/debian-mini-ro-root-odroid-c1).
 
 ## Features:
+* Supports building Wheezy or Jessie (default) images (specify using the DIST variable)
 * SSH root login password: odroid
 * Host name: odroidc1-MACADDRESS (e.g. odroidc1-1a2b3c4d5e6f)
 * SSH host keys are generated and saved permanently on first boot
@@ -24,14 +25,14 @@ sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1
 ```
 
 ## Build the image:
-Just use the make utility to build an sdcard.img.  Be sure to run this with sudo, as root privileges are required to mount the image.
+Just use the make utility to build e.g. an sdcard-jessie.img.  Be sure to run this with sudo, as root privileges are required to mount the image.
 ```
-sudo make
+sudo make DIST=jessie IMAGE_MB=1024
 ```
 
-This will install the toolchains, compile u-boot, the kernel, bootstrap Debian and create a 512mb sdcard.img file, which then can be transferred to a sd card (e.g. using dd):
+This will install the toolchains, compile u-boot, the kernel, bootstrap Debian and create a 1024mb sdcard-jessie.img file, which then can be transferred to a sd card (e.g. using dd):
 ```
-sudo dd bs=1M if=sdcard.img of=/dev/YOUR_SD_CARD
+sudo dd bs=1M if=sdcard-jessie.img of=/dev/YOUR_SD_CARD && sync
 ```
 
 ## Customize your image:

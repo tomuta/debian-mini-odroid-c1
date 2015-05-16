@@ -1,15 +1,22 @@
-DIST := stable
+DIST ?= jessie
 DIST_URL := http://http.debian.net/debian/
 DIST_ARCH := armhf
 
-BOOT_MB := 32
-ROOT_MB := 768
+ifneq ($(findstring $(DIST),jessie stable),)
+# ROOT_DEV is needed for jessie, it will cause boot.ini to boot from /dev/mmcblk0p2 rather than from UUID.
+# For some reason, booting by UUID is broken with jessie...
+ROOT_DEV := /dev/mmcblk0p2
+endif
+
+IMAGE_MB ?= 768
+BOOT_MB ?= 32
+ROOT_MB=$(shell expr $(IMAGE_MB) - $(BOOT_MB))
 
 BOOT_DIR := boot
 MODS_DIR := mods
 ROOTFS_DIR := rootfs
 RAMDISK_FILE := uInitrd
-IMAGE_FILE := sdcard.img
+IMAGE_FILE := sdcard-$(DIST).img
 
 UBOOT_TOOLCHAIN := gcc-linaro-arm-none-eabi-4.8-2014.04_linux.tar.xz
 UBOOT_TOOLCHAIN_URL := http://releases.linaro.org/14.04/components/toolchain/binaries/$(UBOOT_TOOLCHAIN)

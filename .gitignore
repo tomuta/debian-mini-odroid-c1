@@ -1,4 +1,4 @@
-sdcard.img
+sdcard-*.img
 linux_tc
 linux
 uboot_tc
