@@ -118,7 +118,7 @@ fi
 
 # Mount boot partition, format it and copy files
 lodev=$(losetup_partition $outfile 1)
-partprobe $lodev
+partprobe $lodev || true
 echo "Formatting boot partition on $lodev..."
 mkfs.vfat -F 32 $lodev
 boot_uuid=`blkid $lodev | sed -n 's/.*UUID=\"\([^\"]*\)\".*/\1/p'`
@@ -126,7 +126,7 @@ losetup_delete_retry $lodev
 
 # Mount rootfs partition, format it and copy files
 lodev=$(losetup_partition $outfile 2)
-partprobe $lodev
+partprobe $lodev || true
 echo "Formatting root partition on $lodev..."
 mkfs.ext4 -b 4096 -E stride=16384,stripe-width=16384 -m 1 -L root $lodev
 #tune2fs -i 0 -c 0 $lodev
@@ -150,7 +150,7 @@ sleep 2
 
 # Mount the boot partition again and copy boot.ini
 lodev=$(losetup_partition $outfile 1)
-partprobe $lodev
+partprobe $lodev || true
 echo "Mounting boot partition on $lodev..."
 mount -t vfat $lodev mnt/
 if [ "$root_dev" != "" ]; then
@@ -159,8 +159,8 @@ if [ "$root_dev" != "" ]; then
 else
 	sed -e "s/\${BOOT_UUID}/$boot_uuid/" -e "s/\${ROOT_DEV}/UUID=$root_uuid/" boot.ini.template > mnt/boot.ini
 fi
-cp -rp $boot_dir/* mnt/
-cp -p $ramfs_file mnt/
+cp -r $boot_dir/* mnt/
+cp $ramfs_file mnt/
 if [ -x "./createimg-bootfs-post" ] ; then
 	./createimg-bootfs-post mnt/
 fi
