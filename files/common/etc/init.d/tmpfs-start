@@ -1,0 +1,26 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          tmpfs-start
+# Required-Start:    $local_fs
+# Required-Stop:
+# Default-Start:     S
+# Default-Stop:
+# X-Start-Before:    networking
+# Short-Description: Populates /tmp after bootup.
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+case "$1" in
+    start)
+    log_action_begin_msg "Initializing /tmp"
+    mkdir -p /tmp/udev-rules.d
+    mkdir -p /tmp/var/lib/dhcp
+    log_action_end_msg 0
+    ;;
+
+    *)
+    echo "Usage: /etc/init.d/$0 start"
+    exit 1
+
+esac

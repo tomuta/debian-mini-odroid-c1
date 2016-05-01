@@ -1,0 +1,6 @@
+UUID=${ROOT_UUID}  /        ext4    errors=remount-ro,ro,noatime,nodiratime 0 1
+UUID=${BOOT_UUID}  /boot    vfat    defaults,ro,owner,noatime,nodiratime,flush,umask=000       0 0
+tmpfs              /root    tmpfs   nodev,nosuid,mode=1777                  0 0
+tmpfs              /media   tmpfs   nodev,nosuid,mode=1777                  0 0
+tmpfs              /var/log tmpfs   defaults,nosuid,mode=0755,size=100m     0 0
+tmpfs              /tmp     tmpfs   nodev,nosuid,mode=1777                  0 0

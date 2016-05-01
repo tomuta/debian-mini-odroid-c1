@@ -1,0 +1,12 @@
+--- lib/udev/udev-finish.orig	2016-03-13 21:53:19.000000000 -0600
++++ lib/udev/udev-finish	2016-04-30 13:17:56.548722902 -0600
+@@ -1,6 +1,9 @@
+ #!/bin/sh -e
+ 
+ # Copy any rules generated while the root filesystem was read-only
++if [ ! -d /tmp/udev-rules.d ]; then
++  mkdir -p /tmp/udev-rules.d
++fi
+ for file in /run/udev/tmp-rules--*; do
+   [ -e "$file" ] || continue
+   cat "$file" >> "/etc/udev/rules.d/${file##*tmp-rules--}"

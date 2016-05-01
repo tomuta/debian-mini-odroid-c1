@@ -1,5 +1,7 @@
 include common.mk
 
+export ARCH := $(UBOOT_ARCH)
+export CROSS_COMPILE := $(UBOOT_TC_PREFIX)
 export PATH := $(shell pwd)/$(UBOOT_TC_PATH):$(PATH)
 
 UBOOT_BIN := $(UBOOT_SRC)/sd_fuse/uboot.bin
@@ -28,10 +30,10 @@ $(UBOOT_TOOLCHAIN):
 build: $(UBOOT_BIN)
 
 $(UBOOT_BIN): $(UBOOT_TC_DIR) $(UBOOT_SRC)
-	$(MAKE) -C $(UBOOT_SRC) odroidc_config
+	$(MAKE) -C $(UBOOT_SRC) $(UBOOT_CONFIG)
 	$(MAKE) -C $(UBOOT_SRC)
 	touch $@
 
 $(UBOOT_SRC):
-	git clone --depth=1 $(UBOOT_REPO) -b $(UBOOT_BRANCH)
+	git clone --depth=1 $(UBOOT_REPO) -b $(UBOOT_BRANCH) $@
 

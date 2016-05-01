@@ -27,7 +27,7 @@ $(ROOTFS_DIR).base:
 	if test -d "$@.tmp"; then rm -rf "$@.tmp" ; fi
 	mkdir -p $@.tmp
 	debootstrap --foreign --no-check-gpg --include=ca-certificates,ssh,vim,locales,ntpdate,usbmount,initramfs-tools --arch=$(DIST_ARCH) $(DIST) $@.tmp $(DIST_URL)
-	cp `which qemu-arm-static` $@.tmp/usr/bin
+	cp `which $(QEMU_STATIC_BIN)` $@.tmp/usr/bin
 	chroot $@.tmp /bin/bash -c "/debootstrap/debootstrap --second-stage"
 	rm $@.tmp/etc/hostname
 	rm $@.tmp/etc/ssh/ssh_host_*
@@ -46,23 +46,23 @@ $(ROOTFS_DIR): $(ROOTFS_DIR).base
 	mount -o bind /dev $@/dev
 	cp postinstall $@
 	if [ -d "postinst" ]; then cp -r postinst $@ ; fi
-	LINUX_VERSION="$(shell cat $(LINUX_SRC)/include/config/kernel.release)" && chroot $@ /bin/bash -c "/postinstall $(DIST) $(DIST_URL) $$LINUX_VERSION"
-	for i in patches/*.patch ; do patch -p0 -d $@ < $$i ; done
-	if [ -d patches/$(DIST) ]; then for i in patches/$(DIST)/*.patch; do patch -p0 -d $@ < $$i ; done fi
+	LINUX_VERSION="$(shell cat $(LINUX_SRC)/include/config/kernel.release)" && chroot $@ /bin/bash -c "/postinstall $(DIST) $(DIST_URL) $$LINUX_VERSION $(ODROID) $(ROOT_RW_FLAG)"
+	if ls patches/*.patch 1> /dev/null 2>&1; then for i in patches/*.patch ; do patch -p0 -d $@ < $$i ; done fi
+	if [ -d patches/$(DIST) ]; then if ls patches/$(DIST)/*.patch 1> /dev/null 2>&1; then for i in patches/$(DIST)/*.patch; do patch -p0 -d $@ < $$i ; done fi fi
 	umount $@/proc
 	umount $@/sys
 	umount $@/dev
 	rm $@/postinstall
 	rm -rf $@/postinst/
-	rm $@/usr/bin/qemu-arm-static
+	rm $@/usr/bin/$(QEMU_STATIC_BIN)
 	touch $@
 
 $(RAMDISK_FILE): $(ROOTFS_DIR)
-	mkimage -A arm -O linux -T ramdisk -C none -a 0 -e 0 -n uInitrd -d $(ROOTFS_DIR)/boot/initrd.img-* uInitrd
+	mkimage -A $(LINUX_ARCH) -O linux -T ramdisk -C none -a 0 -e 0 -n uInitrd -d $(ROOTFS_DIR)/boot/initrd.img-* uInitrd
 
 $(IMAGE_FILE): $(ROOTFS_DIR) $(RAMDISK_FILE)
 	if test -f "$@.tmp"; then rm "$@.tmp" ; fi
-	./createimg $@.tmp $(BOOT_MB) $(ROOT_MB) $(BOOT_DIR) $(ROOTFS_DIR) $(UBOOT_BIN_DIR) $(RAMDISK_FILE) "$(ROOT_DEV)"
+	./createimg $(ODROID) $@.tmp $(BOOT_MB) $(ROOT_MB) $(BOOT_DIR) $(ROOTFS_DIR) $(UBOOT_BIN_DIR) $(RAMDISK_FILE) "$(ROOT_DEV)" $(ROOT_RW_FLAG)
 	mv $@.tmp $@
 	touch $@
 

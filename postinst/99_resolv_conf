@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# The first argument is the name of the distribution
+# The second argument is the name of the odroid device, e.g. "c1" or "c2"
+# The third argument is whether the rootfs is mounted read-only: "rw" or "ro"
+
+set -e
+
+dist=$1
+
+if [ "$dist" != "wheezy" ]; then
+    # On jessie and beyond, the default shell switched to /bin/dash.
+    # This means that the /etc/dhcp/dhclient-enter-hooks.d/00-make_resolv_conf
+    # hook won't work because dash does not know $(declare)...
+    # To make it work, patch /sbin/dhclient-script to use bash again...
+    sed -i "s/\#\!\/bin\/sh/\#\!\/bin\/bash/g" /sbin/dhclient-script
+fi
+
+# resolv.conf needs to live in /tmp, but we still need /etc/resolv.conf as well
+rm /etc/resolv.conf
+ln -s /tmp/resolv.conf /etc/resolv.conf

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# The first argument is the name of the distribution
+# The second argument is the name of the odroid device, e.g. "c1" or "c2"
+# The third argument is whether the rootfs is mounted read-only: "rw" or "ro"
+
+set -e
+
+# Make /etc/udev/rules.d point to a directory in /tmp (which is created at boot time)
+rm -rf /etc/udev/rules.d
+ln -s /tmp/udev-rules.d /etc/udev/rules.d
+

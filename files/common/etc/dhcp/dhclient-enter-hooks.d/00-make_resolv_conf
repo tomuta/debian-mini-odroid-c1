@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# This script overrides the make_resolv_conf() function in
+# /sbin/dhclient-script and replaces /etc/resolv.conf with
+# /tmp/resolv.conf
+#
+# NOTE: In jessie and later the default shell switched to /bin/dash
+#       and dash does not support $(declare).  In order to make this
+#       work, we patch /sbin/dhclient-script to use bash.
+
+cur_make_resolv_conf=$(declare -f make_resolv_conf)
+eval ${cur_make_resolv_conf//\/etc\/resolv.conf/\/tmp\/resolv.conf}
+

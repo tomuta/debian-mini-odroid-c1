@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# The first argument is the name of the distribution
+# The second argument is the name of the odroid device, e.g. "c1" or "c2"
+# The third argument is whether the rootfs is mounted read-only: "rw" or "ro"
+
+set -e
+
+dist=$1
+
+if [ "$dist" != "wheezy" ]; then
+    # Register the /etc/init.d/tmpfs-start boot script
+    insserv tmpfs-start
+fi

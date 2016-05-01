@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# The first argument is the name of the distribution
+# The second argument is the name of the odroid device, e.g. "c1" or "c2"
+# The third argument is whether the rootfs is mounted read-only: "rw" or "ro"
+
+set -e
+
+# /var/lib/dhcp will be a symlink to /tmp
+rm -rf /var/lib/dhcp
+ln -s /tmp/var/lib/dhcp /var/lib/dhcp

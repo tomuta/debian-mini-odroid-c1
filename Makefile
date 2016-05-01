@@ -9,6 +9,8 @@
 #    sudo apt-get update
 #    sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1
 #
+include common.mk
+
 .PHONY: all
 all: build
 

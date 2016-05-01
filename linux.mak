@@ -1,10 +1,8 @@
 include common.mk
 
-export ARCH := arm
+export ARCH := $(LINUX_ARCH)
 export CROSS_COMPILE := $(LINUX_TC_PREFIX)
 export PATH := $(shell pwd)/$(LINUX_TC_PATH):$(PATH)
-
-UIMAGE_BIN := $(LINUX_SRC)/arch/arm/boot/uImage
 
 .PHONY: all
 all: build
@@ -29,22 +27,23 @@ $(LINUX_TOOLCHAIN):
 .PHONY: build
 build: $(BOOT_DIR) $(MODS_DIR)
 
-$(BOOT_DIR): $(UIMAGE_BIN) $(MESON8B_ODROIDC_DTB_BIN)
+$(BOOT_DIR): $(LINUX_IMAGE_BIN)
 	if test -d "$@.tmp"; then rm -rf "$@.tmp" ; fi
 	if test -d "$@"; then rm -rf "$@" ; fi
 	mkdir -p "$@.tmp"
-	cp -p $(LINUX_SRC)/arch/arm/boot/uImage "$@.tmp"
-	cp -p $(LINUX_SRC)/arch/arm/boot/dts/meson8b_odroidc.dtb "$@.tmp"
+	cp -p $(LINUX_IMAGE_BIN) "$@.tmp"
+	cp -p $(LINUX_DTS_PATH)/$(LINUX_DTB_FILE) "$@.tmp"
 	mv "$@.tmp" $@
 	touch $@
 
-$(UIMAGE_BIN): $(LINUX_TC_DIR) $(LINUX_SRC)
-	$(MAKE) -C $(LINUX_SRC) odroidc_defconfig
-	$(MAKE) -C $(LINUX_SRC) uImage
+$(LINUX_IMAGE_BIN): $(LINUX_TC_DIR) $(LINUX_SRC)
+	$(MAKE) -C $(LINUX_SRC) $(LINUX_CONFIG)
+	$(MAKE) -C $(LINUX_SRC) $(LINUX_IMAGE_FILE)
 	$(MAKE) -C $(LINUX_SRC) dtbs
+	$(MAKE) -C $(LINUX_SRC) modules
 	touch $@
 
-$(MODS_DIR): $(UIMAGE_BIN)
+$(MODS_DIR): $(LINUX_IMAGE_BIN)
 	if test -d "$@.tmp"; then rm -rf "$@.tmp" ; fi
 	if test -d "$@"; then rm -rf "$@" ; fi
 	mkdir -p "$@.tmp"
@@ -54,5 +53,5 @@ $(MODS_DIR): $(UIMAGE_BIN)
 	touch $@
 
 $(LINUX_SRC):
-	git clone --depth=1 $(LINUX_REPO) -b $(LINUX_BRANCH)
+	git clone --depth=1 $(LINUX_REPO) -b $(LINUX_BRANCH) $@
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 ### BEGIN INIT INFO
 # Provides:          usbmount-start
 # Required-Start:    udev $local_fs
@@ -14,6 +14,7 @@
 
 ## install with update-rc.d usbmount-start start 99 S
 
+. /lib/init/vars.sh
 . /lib/lsb/init-functions
 
 . /etc/usbmount/usbmount.conf

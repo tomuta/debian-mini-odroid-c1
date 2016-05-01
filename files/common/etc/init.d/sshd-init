@@ -1,0 +1,46 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          sshd-init
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:
+# Default-Start:     S
+# Default-Stop:
+# X-Start-Before:    sshd
+# Short-Description: Creates the ssh host keys on first boot.
+# Description:       Creates the ssh host keys on first boot.
+### END INIT INFO
+
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+. /lib/lsb/init-functions
+
+case "$1" in
+    start)
+    if ! ls /etc/ssh/ssh_host_*_key 1> /dev/null 2>&1; then
+        # Need to run the following in background, otherwise dpkg-reconfigure
+        # will deadlock trying to run systemctl while this script is running...
+        (
+          LOCKDIR="/var/lock/remount_rootfs"
+          until mkdir "$LOCKDIR" 2>/dev/null; do
+              sleep 1
+          done
+          RO_ROOT=`grep -c -E "\s/\s[[:alnum:]]+\sro[\s,]" /proc/mounts`
+          if [ "$RO_ROOT" != "0" ]; then
+              mount -n -o remount,rw / || echo "Remounting / rw failed"
+          fi
+          dpkg-reconfigure -f noninteractive openssh-server
+          if [ "$RO_ROOT" != "0" ]; then
+              sync || echo "sync failed"
+              mount -n -o remount,ro / || echo "Remount / ro failed"
+          fi
+          rm -rf "$LOCKDIR"
+        )&
+        log_action_end_msg 0
+    fi
+    ;;
+
+    *)
+    echo "Usage: /etc/init.d/$0 start"
+    exit 1
+
+esac

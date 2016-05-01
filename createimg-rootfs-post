@@ -3,9 +3,15 @@
 # This script is invoked after the createimg script copied the root partition
 # to the mounted image.
 #
-# The first argument is the folder of the mounted root partition.
-# The second argument is the folder of the source root file system before it
+# The first argument is the type of odroid device, e.g. "c1" or "c2"
+# The second argument is the folder of the mounted root partition.
+# The third argument is the folder of the source root file system before it
 # was copied to the mounted partition.  Some folders like /boot, /media, /root,
 # and /tmp are not copied to the mounted partition.
+# The fourth argument is whether the rootfs is mounted read-only: "rw" or "ro"
 #
 
+set -e
+
+# Clean up log files
+rm -rf $2/var/log/*
