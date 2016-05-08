@@ -15,7 +15,7 @@ Script to build a minimal Debian sd card image.
 ## Prerequisites:
 On a x86 based Ubuntu system, make sure the following packages are installed:
 ```
-sudo apt-get install build-essential wget git lzop u-boot-tools binfmt-support \
+sudo apt-get install build-essential bc wget git lzop u-boot-tools binfmt-support \
                      qemu qemu-user-static debootstrap parted
 ```
 
