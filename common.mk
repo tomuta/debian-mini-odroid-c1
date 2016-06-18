@@ -43,7 +43,7 @@ ifeq ($(ODROID),c1)
     UBOOT_TOOLCHAIN := gcc-linaro-arm-none-eabi-4.8-2014.04_linux.tar.xz
     UBOOT_TOOLCHAIN_URL := https://releases.linaro.org/14.04/components/toolchain/binaries/$(UBOOT_TOOLCHAIN)
     UBOOT_TC_PATH := $(UBOOT_TC_DIR)/gcc-linaro-arm-none-eabi-4.8-2014.04_linux/bin
-    UBOOT_TC_PREFIX := arm-linux-gnueabihf-
+    UBOOT_TC_PREFIX := arm-none-eabi-
     UBOOT_BRANCH := odroidc-v2011.03
     UBOOT_CONFIG := odroidc_config
     UBOOT_ARCH := arm
