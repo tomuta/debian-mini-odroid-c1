@@ -26,6 +26,10 @@ sudo apt-get update
 sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1
 ```
 
+On a x86 based Debian system, install the following extra packages:
+```
+sudo apt-get install dosfstools bc
+```
 ## Build the image:
 Just use the make utility to build e.g. an sdcard-c2-jessie.img.  Be sure to run this with sudo, as root privileges are required to mount the image.
 ```
