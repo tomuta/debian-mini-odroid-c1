@@ -41,7 +41,7 @@ ifeq ($(ODROID),c1)
     DIST_ARCH := armhf
 
     UBOOT_TOOLCHAIN := gcc-linaro-arm-none-eabi-4.8-2014.04_linux.tar.xz
-    UBOOT_TOOLCHAIN_URL := https://releases.linaro.org/14.04/components/toolchain/binaries/$(UBOOT_TOOLCHAIN)
+    UBOOT_TOOLCHAIN_URL := https://releases.linaro.org/archive/14.04/components/toolchain/binaries/$(UBOOT_TOOLCHAIN)
     UBOOT_TC_PATH := $(UBOOT_TC_DIR)/gcc-linaro-arm-none-eabi-4.8-2014.04_linux/bin
     UBOOT_TC_PREFIX := arm-linux-gnueabihf-
     UBOOT_BRANCH := odroidc-v2011.03
@@ -49,7 +49,7 @@ ifeq ($(ODROID),c1)
     UBOOT_ARCH := arm
 
     LINUX_TOOLCHAIN := gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux.tar.xz
-    LINUX_TOOLCHAIN_URL := https://releases.linaro.org/14.09/components/toolchain/binaries/$(LINUX_TOOLCHAIN)
+    LINUX_TOOLCHAIN_URL := https://releases.linaro.org/archive/14.09/components/toolchain/binaries/$(LINUX_TOOLCHAIN)
     LINUX_TC_PATH := $(LINUX_TC_DIR)/bin
     LINUX_TC_PREFIX := arm-linux-gnueabihf-
     LINUX_BRANCH := odroidc-3.10.y
@@ -75,7 +75,7 @@ ifeq ($(ODROID),c2)
     DIST_ARCH := arm64
 
     UBOOT_TOOLCHAIN := gcc-linaro-aarch64-none-elf-4.9-2014.09_linux.tar.xz
-    UBOOT_TOOLCHAIN_URL := https://releases.linaro.org/14.09/components/toolchain/binaries/$(UBOOT_TOOLCHAIN)
+    UBOOT_TOOLCHAIN_URL := https://releases.linaro.org/archive/14.09/components/toolchain/binaries/$(UBOOT_TOOLCHAIN)
     UBOOT_TC_PATH := $(UBOOT_TC_DIR)/gcc-linaro-aarch64-none-elf-4.9-2014.09_linux/bin
     UBOOT_TC_PREFIX := aarch64-none-elf-
     UBOOT_BRANCH := odroidc2-v2015.01
@@ -83,7 +83,7 @@ ifeq ($(ODROID),c2)
     UBOOT_ARCH := arm
 
     LINUX_TOOLCHAIN := gcc-linaro-aarch64-linux-gnu-4.9-2014.09_linux.tar.xz
-    LINUX_TOOLCHAIN_URL := https://releases.linaro.org/14.09/components/toolchain/binaries/$(LINUX_TOOLCHAIN)
+    LINUX_TOOLCHAIN_URL := https://releases.linaro.org/archive/14.09/components/toolchain/binaries/$(LINUX_TOOLCHAIN)
     LINUX_TC_PATH := $(LINUX_TC_DIR)/bin
     LINUX_TC_PREFIX := aarch64-linux-gnu-
     LINUX_BRANCH := odroidc2-3.14.y
